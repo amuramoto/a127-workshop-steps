@@ -1,0 +1,161 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Hello World App
+# during dev, should point to your local machine
+host: localhost
+# basePath prefixes all resource paths 
+basePath: /
+# 
+schemes:
+  # tip: remove http to make production-grade
+  - http
+  - https
+# format of bodies a client can send (Content-Type)
+consumes:
+  - application/json
+# format of the responses to the client (Accepts)
+produces:
+  - application/json
+x-a127-config: {}
+x-a127-services: {}
+paths:
+  /hello:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: hello_world
+    x-a127-apply: {}
+    get:
+      description: Returns 'Hello' to the caller
+      # used as the method name of the controller
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+  /restaurants:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: restaurants
+    x-a127-apply: {}
+    get:
+      description: Returns a list of restaurants
+      # used as the method name of the controller
+      operationId: getRestaurants      
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"       
+  /restaurants/{id}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: restaurants
+    x-a127-apply: {}
+    get:
+      description: Returns a single restaurant
+      # used as the method name of the controller
+      operationId: getRestaurantById
+      parameters:
+        - name: id
+          in: path
+          description: The restID of the restaurant to be retrieved
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse" 
+  /reviews:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: reviews
+    x-a127-apply: {}
+    get:
+      description: Returns a list of reviews for a restaurant
+      # used as the method name of the controller
+      operationId: getReviews
+      parameters:
+        - name: id
+          in: query
+          description: The restID of the restaurant to retrieve reviews for
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"  
+    post:
+      description: Creates a new review for a restaurant
+      # used as the method name of the controller
+      operationId: postReview
+      parameters:
+        - name: body
+          in: body
+          description: The body of the review
+          required: true
+          schema:
+            $ref: "#/definitions/Review"  
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/HelloWorldResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"  
+# complex objects have schema definitions
+definitions:
+  Review:
+    properties:
+      restID:
+        type: integer
+      rating:
+        type: integer
+      review:
+        type: string
+    required: [restID, rating]
+  HelloWorldResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
